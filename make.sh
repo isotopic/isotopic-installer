@@ -1,15 +1,18 @@
 #!/bin/bash
 
 
-#TODO: GERAR HTACCESS
+# TODO: 
+# permitir escolher diretorio de instalação;
+# deletar .git e este próprio arquivo após instalação;
+
 
 clear
 
 MYSQL_USER=''
 MYSQL_PASSWD=''
-DATABASE_NAME='wordxpress_'$(date +%s)
+DATABASE_NAME='isotopic_'$(date +%s)
 DUMP_FILE=''
-WORDPRESS_SRC='https://wordpress.org/wordpress-4.3.tar.gz'
+WORDPRESS_SRC='https://wordpress.org/wordpress-4.3.1.tar.gz'
 THEME_SRC='https://github.com/isotopic/isotopic-theme.git'
 HOME='http://localhost/'${PWD##*/}
 CYAN="\033[0;33m"
@@ -23,16 +26,17 @@ function intro {
 
 	cat <<-HERE_EOL
 	$(echo -e "${CYAN}")
-	 --------------------------------------------------------------
-	  _      __            __                         
-	 | | /| / /__  _______/ /_ __ ___  _______ ___ ___
-	 | |/ |/ / _ \/ __/ _  /\ \ // _ \/ __/ -_|_-<(_-<
-	 |__/|__/\___/_/  \_,_//_\_\/ .__/_/  \__/___/___/
-	                           /_/                    
+	 -------------------------------------------------------------
+	     ____           __              _     
+	    /  _/________  / /_____  ____  (_)____
+	    / // ___/ __ \/ __/ __ \/ __ \/ / ___/
+	  _/ /(__  ) /_/ / /_/ /_/ / /_/ / / /__  
+	 /___/____/\____/\__/\____/ .___/_/\___/   LOCAL DEV INSTALLER
+	                         /_/              
 	
-	 Ambiente de desenvolvimento local para um tema do wordpress.
+	 Ambiente de desenvolvimento local para o tema do isotopic.
 	 A instalação consiste no download e configuração do wordpress,
-	 checkout de um tema no git e importação do dump básico mysql.
+	 checkout do tema no git e a importação do dump básico mysql.
 	 Requisitos de sistema:
 	 Apache, PHP, MySQL, git (mysql e git adicionados ao PATH);
 	 --------------------------------------------------------------
