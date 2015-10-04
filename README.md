@@ -7,3 +7,5 @@ Fazer o checkout no server root (ex. localhost/isotopic-local/install.sh) e exec
 ```sh
 $ ./install.sh
 ```
+
+Após terminada a execução, os arquivos de instalação (install.sh, .git, README.md) são removidos.
