@@ -260,6 +260,8 @@ function config_mysql_options {
 
 function finish {
 
+	printf "\n Importação completada. Site rodando em :$WHITE $HOME $RESET\n"
+
 	if [ -d ".git" ]; then
 	  rm -rf ".git"
 	fi
@@ -268,11 +270,15 @@ function finish {
 	  rm "install.sh"
 	fi
 
+	if [ -e ".gitignore" ]; then
+	  rm ".gitignore"
+	fi
+
 	if [ -e "README.md" ]; then
 	  rm "README.md"
 	fi
 
-	printf "\n Importação completada e arquivos de instalação removidos. Site rodando em :$WHITE $HOME $RESET\n"
+	
 
 }
 
