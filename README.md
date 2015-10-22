@@ -20,4 +20,4 @@ $ ./install.sh
 ```
 
 
-Após terminada a execução, os arquivos de instalação (install.sh, .git, README.md) são removidos.
+Após terminada a execução, os arquivos de instalação (install.sh, .git, README.md) são removidos e as edições no tema devem ser comitadas no repositório do próprio tema (isotopic-theme).
