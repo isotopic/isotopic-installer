@@ -242,17 +242,17 @@ function import_mysql_dump {
 
 	printf "\n Arquivo .sql a ser importado:$WHITE $DUMP_FILE $RESET\n"
 
-	echo "create database $DATABASE_NAME" | mysql -u$MYSQL_USER -p$MYSQL_PASSWD
+	echo "create database $DATABASE_NAME" | mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD"
 
-	mysql -u$MYSQL_USER -p$MYSQL_PASSWD $DATABASE_NAME < $DUMP_FILE
+	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" $DATABASE_NAME < $DUMP_FILE
 
 }
 
 
 function config_mysql_options {
 
-	mysql -u$MYSQL_USER -p$MYSQL_PASSWD --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$HOME/wordpress' WHERE option_name='siteurl'"
-	mysql -u$MYSQL_USER -p$MYSQL_PASSWD --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$HOME' WHERE option_name='home'"
+	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$HOME/wordpress' WHERE option_name='siteurl'"
+	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$HOME' WHERE option_name='home'"
 
 }
 
