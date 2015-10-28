@@ -64,7 +64,7 @@ function requeriments_check {
 	    ERRORS=1
 	fi
 
-	if ps ax | grep -v grep | grep httpd > /dev/null ; then
+	if ps ax | grep -v grep | grep httpd > /dev/null  ||  ps ax | grep -v grep | grep apache2 > /dev/null  ; then
 		printf "\n httpd service:$WHITE ok$RESET"
 	else
 		printf "\n httpd service:$RED fail$RESET"
