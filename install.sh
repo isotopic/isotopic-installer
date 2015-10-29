@@ -102,7 +102,7 @@ function path_check {
 	if [ $length -eq 1 ]
 	then
 
-		DUMP_FILE=$(ls $dump_dir)
+		IP=${ADDRESS[0]}
 
 	elif [ $length -gt 1 ]
 	then
@@ -118,7 +118,6 @@ function path_check {
 		read index
 
 		IP=${ADDRESS[$(($index-1))]}
-		HOME='http://'${IP}'/'${PWD##*/}
 
 	else
 
@@ -126,6 +125,7 @@ function path_check {
 
 	fi
 
+	HOME='http://'${IP}'/'${PWD##*/}
 
 	FILE="${HOME}/install.sh"
 	code=$(curl --write-out %{http_code} --silent --output /dev/null ${FILE})
