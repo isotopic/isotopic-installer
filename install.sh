@@ -9,11 +9,15 @@ DATABASE_NAME='isotopic_'$(date +%s)
 DUMP_FILE=''
 WORDPRESS_SRC='https://wordpress.org/wordpress-4.3.1.tar.gz'
 THEME_SRC='https://github.com/isotopic/isotopic-theme.git'
-HOME='http://localhost/'${PWD##*/}
+INET=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+HOME='http://'${INET}'/'${PWD##*/}
+INSTALL_PATH="${HOME}/install.sh" 
 CYAN="\033[0;33m"
 WHITE="\033[1;37m"
 RED="\033[1;31m"
 RESET="\033[0m"
+
+
 
 
 
@@ -88,13 +92,24 @@ function requeriments_check {
 }
 
 
+function path_check {
+	FILE="${HOME}/install.sh"
+	code=$(curl --write-out %{http_code} --silent --output /dev/null ${FILE})
+	if [ $code -ne 200 ] ; then
+		#printf "\n\n Url caminho:$WHITE ok$RESET"
+		printf "\n\n ${WHITE}${HOME} ${RED}não encontrado. ${RESET}\n\n"
+	    exit 1
+	fi
+}
+
+
 function confirm_proceed {
 
 	cat <<-HERE_EOL
 	
-	 A url a ser configurada no site será: $(echo -e "${WHITE}$HOME${RESET}")
+	 Url prevista para configuração: $(echo -e "${WHITE}$HOME${RESET}")
 
-	 O nome do banco de dados será: $(echo -e "${WHITE}$DATABASE_NAME${RESET}")
+	 Novo banco de dados: $(echo -e "${WHITE}$DATABASE_NAME${RESET}")
 
 	HERE_EOL
 
@@ -289,6 +304,8 @@ function finish {
 intro 
 
 requeriments_check
+
+path_check
 
 confirm_proceed
 
