@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 
 
 clear
@@ -10,7 +10,8 @@ DUMP_FILE=''
 WORDPRESS_SRC='https://wordpress.org/wordpress-4.3.1.tar.gz'
 THEME_SRC='https://github.com/isotopic/isotopic-theme.git'
 INET=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-HOME='http://'${INET}'/'${PWD##*/}
+ADDRESS=($INET)
+HOME=''
 INSTALL_PATH="${HOME}/install.sh" 
 CYAN="\033[0;33m"
 WHITE="\033[1;37m"
@@ -52,7 +53,7 @@ function requeriments_check {
 
 	ERRORS=0
 
-	printf ' Checando requerimentos...\n'
+	printf ' Checando LAMP stack...\n'
 
 	if hash mysql 2>/dev/null; then
         printf "\n mysql client:$WHITE ok$RESET"
@@ -93,6 +94,39 @@ function requeriments_check {
 
 
 function path_check {
+
+
+	length=${#ADDRESS[@]}
+
+
+	if [ $length -eq 1 ]
+	then
+
+		DUMP_FILE=$(ls $dump_dir)
+
+	elif [ $length -gt 1 ]
+	then
+
+		printf '\n Mais de um endereço de rede encontrado.\n Teste qual dos dois ips é acessível pelo browser. \n\n'	
+
+		for (( i=0; i<${#ADDRESS[@]}; i++ ));
+		do
+		  printf " ${WHITE}[$(($i+1))]${RESET} ${ADDRESS[$i]}\n"
+		done
+
+	 	printf "\n > Digite o número do endereço a ser usado e pressione enter: "
+		read index
+
+		IP=${ADDRESS[$(($index-1))]}
+		HOME='http://'${IP}'/'${PWD##*/}
+
+	else
+
+	  exit 1
+
+	fi
+
+
 	FILE="${HOME}/install.sh"
 	code=$(curl --write-out %{http_code} --silent --output /dev/null ${FILE})
 	if [ $code -ne 200 ] ; then
@@ -100,6 +134,7 @@ function path_check {
 		printf "\n\n ${WHITE}${HOME} ${RED}não encontrado. ${RESET}\n\n"
 	    exit 1
 	fi
+
 }
 
 
@@ -227,12 +262,12 @@ function choose_mysql_dump() {
 
 			for (( i=0; i<${length}; i++ ));
 			do
-			  echo " [$i] ${dump_files[$i]}"
+			  echo " [$(($i+1))] ${dump_files[$i]}"
 			done
 
-		 	printf "\n > Digite o índice do arquivo a ser importado e pressione enter: "
+		 	printf "\n > Digite o número do arquivo a ser importado e pressione enter: "
 			read index
-			DUMP_FILE=${dump_files[$index]}
+			DUMP_FILE=${dump_files[$(($index-1))]}
 
 		else
 
