@@ -121,7 +121,8 @@ function path_check {
 
 	else
 
-	  exit 1
+		printf "\n\n ${RED}Interface de rede não encontrada. ${RESET}\n\n"
+		exit 1
 
 	fi
 
