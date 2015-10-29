@@ -293,6 +293,10 @@ function finish {
 	  rm "README.md"
 	fi
 
+	if [ "$(uname)" == "Darwin" ]; then
+	   open ${HOME} 
+	fi
+	exit 0
 	
 
 }
