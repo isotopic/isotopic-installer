@@ -210,12 +210,22 @@ function config_wordpress {
 
 	cp wordpress/wp-config-sample.php wordpress/wp-config.php
 
-	sed -i '' 's/database_name_here/'"$DATABASE_NAME"'/g' wordpress/wp-config.php
-	sed -i '' 's/username_here/'"$MYSQL_USER"'/g'   wordpress/wp-config.php
-	sed -i '' 's/password_here/'"$MYSQL_PASSWD"'/g' wordpress/wp-config.php
+	if [ "$(uname)" == "Darwin" ]; then
+		sed -i '' 's/database_name_here/'"$DATABASE_NAME"'/g' wordpress/wp-config.php
+		sed -i '' 's/username_here/'"$MYSQL_USER"'/g'   wordpress/wp-config.php
+		sed -i '' 's/password_here/'"$MYSQL_PASSWD"'/g' wordpress/wp-config.php
+		cp wordpress/index.php index.php
+		sed -i '' 's/wp-blog-header.php/wordpress\/wp-blog-header.php/g' index.php
+	else
+		sed -i 's/database_name_here/'"$DATABASE_NAME"'/g' wordpress/wp-config.php
+		sed -i 's/username_here/'"$MYSQL_USER"'/g'   wordpress/wp-config.php
+		sed -i 's/password_here/'"$MYSQL_PASSWD"'/g' wordpress/wp-config.php
+		cp wordpress/index.php index.php
+		sed -i 's/wp-blog-header.php/wordpress\/wp-blog-header.php/g' index.php
+	fi
 
-	cp wordpress/index.php index.php
-	sed -i '' 's/wp-blog-header.php/wordpress\/wp-blog-header.php/g' index.php
+	
+
 
 echo "# BEGIN WordPress
 <IfModule mod_rewrite.c>
