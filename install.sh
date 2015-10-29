@@ -43,6 +43,8 @@ function intro {
 	$(echo -e "${RESET}")
 	HERE_EOL
 
+	requeriments_check
+
 }
 
 
@@ -90,6 +92,8 @@ function requeriments_check {
 		exit 1;
 	fi
 
+	path_check
+
 }
 
 
@@ -136,6 +140,8 @@ function path_check {
 	    exit 1
 	fi
 
+	confirm_proceed
+
 }
 
 
@@ -160,6 +166,8 @@ function confirm_proceed {
 		printf '\n'	
 	fi
 
+	get_mysql_creds
+
 }
 
 
@@ -168,6 +176,8 @@ function get_mysql_creds {
 	read -p " > Digite o usuário mysql: " MYSQL_USER
 	printf '\n'
 	read -s -p " > Digite a senha mysql: " MYSQL_PASSWD
+
+	get_wordpress
 
 }
 
@@ -186,6 +196,8 @@ function get_wordpress {
 	else
 	    printf '\n'
 	fi
+
+	config_wordpress
 
 }
 
@@ -225,6 +237,8 @@ RewriteRule . /${PWD##*/}/index.php [L]
 	    printf ": $WHITE ok$RESET\n"
 	fi
 
+	get_theme_repo
+
 }
 
 
@@ -235,6 +249,7 @@ function get_theme_repo {
 	printf '\n\n Clonando repositório do tema...\n\n'
 	git clone $THEME_SRC wordpress/wp-content/themes/isotopic
 
+	choose_mysql_dump
 }
 
 
@@ -284,6 +299,8 @@ function choose_mysql_dump() {
 
 	fi
 
+	import_mysql_dump
+
 }
 
 
@@ -297,6 +314,8 @@ function import_mysql_dump {
 
 	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" $DATABASE_NAME < $DUMP_FILE
 
+	config_mysql_options
+
 }
 
 
@@ -304,6 +323,8 @@ function config_mysql_options {
 
 	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$HOME/wordpress' WHERE option_name='siteurl'"
 	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$HOME' WHERE option_name='home'"
+
+	finish
 
 }
 
@@ -340,30 +361,29 @@ function finish {
 
 
 
-
 intro 
 
-requeriments_check
+#requeriments_check
 
-path_check
+#path_check
 
-confirm_proceed
+#confirm_proceed
 
-get_mysql_creds
+#get_mysql_creds
 
-get_wordpress
+#get_wordpress
 
-config_wordpress
+#config_wordpress
 
-get_theme_repo
+#get_theme_repo
 
-choose_mysql_dump
+#choose_mysql_dump
 
-import_mysql_dump
+#import_mysql_dump
 
-config_mysql_options
+#config_mysql_options
 
-finish
+#finish
 
 
 
