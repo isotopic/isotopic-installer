@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 
 clear
@@ -55,26 +55,26 @@ function requeriments_check {
 
 	ERRORS=0
 
-	printf ' Checando LAMP stack...\n'
+	printf ' Verificando requisitos para instalação...\n'
 
 	if hash mysql 2>/dev/null; then
-        printf "\n mysql client:$WHITE ok$RESET"
+        printf "\n mysql client:  $WHITE ok$RESET"
     else
-    	printf "\n mysql client:$RED fail$RESET"
+    	printf "\n mysql client:  $RED fail$RESET"
         ERRORS=1
     fi
 
 	if hash git 2>/dev/null ; then
-		printf "\n git client:$WHITE ok$RESET"
+		printf "\n git client:    $WHITE ok$RESET"
 	else
-		printf "\n git client:$RED fail$RESET"
+		printf "\n git client:     $RED fail$RESET"
 	    ERRORS=1
 	fi
 
 	if ps ax | grep -v grep | grep httpd > /dev/null  ||  ps ax | grep -v grep | grep apache2 > /dev/null  ; then
-		printf "\n httpd service:$WHITE ok$RESET"
+		printf "\n apache service:$WHITE ok$RESET"
 	else
-		printf "\n httpd service:$RED fail$RESET"
+		printf "\n apache service:$RED fail$RESET"
 	    ERRORS=1
 	fi
 
@@ -103,25 +103,36 @@ function path_check {
 	length=${#ADDRESS[@]}
 
 
-	if [ $length -eq 1 ]
-	then
+	if [ $length -gt 0 ] ; then
 
-		IP=${ADDRESS[0]}
-
-	elif [ $length -gt 1 ]
-	then
-
-		printf '\n Mais de um endereço de rede encontrado.\n Teste qual dos dois ips é acessível pelo browser. \n\n'	
+		printf '\n Foram encontrados os seguintes endereços para esta máquina:\n\n'	
 
 		for (( i=0; i<${#ADDRESS[@]}; i++ ));
 		do
 		  printf " ${WHITE}[$(($i+1))]${RESET} ${ADDRESS[$i]}\n"
 		done
+		printf " ${WHITE}[$(($i+1))]${RESET} Digitar um hostname (ex. localhost, 127.0.0.1, etc)\n"
 
-	 	printf "\n > Digite o número do endereço a ser usado e pressione enter: "
+
+	 	printf "\n > Escolha uma das opções ${WHITE}[n]${RESET} e pressione enter: "
 		read index
 
-		IP=${ADDRESS[$(($index-1))]}
+		if [[ -n ${index//[0-9]/} ]]; then
+		    exit 1
+		fi
+
+
+		if [[ $index = $(($length+1)) ]]; then
+
+			printf "\n > Digite o nome para o host: "
+			read IP
+
+		else
+
+			IP=${ADDRESS[$(($index-1))]}
+
+		fi
+
 
 	else
 
@@ -130,13 +141,17 @@ function path_check {
 
 	fi
 
+
+
+
 	HOME='http://'${IP}'/'${PWD##*/}
 
 	FILE="${HOME}/install.sh"
 	code=$(curl --write-out %{http_code} --silent --output /dev/null ${FILE})
 	if [ $code -ne 200 ] ; then
 		#printf "\n\n Url caminho:$WHITE ok$RESET"
-		printf "\n\n ${WHITE}${HOME} ${RED}não encontrado. ${RESET}\n\n"
+		printf "\n\n ${WHITE}${HOME} ${RED}não respondeu a nenhuma requisição. ${RESET}\n\n"
+
 	    exit 1
 	fi
 
@@ -148,15 +163,16 @@ function path_check {
 function confirm_proceed {
 
 	cat <<-HERE_EOL
-	
-	 Url prevista para configuração: $(echo -e "${WHITE}$HOME${RESET}")
 
-	 Novo banco de dados: $(echo -e "${WHITE}$DATABASE_NAME${RESET}")
+	 Configurações preliminares definidas. 
+
+	 Endereço previsto: $(echo -e "${WHITE}$HOME${RESET}")
+	 Banco de dados a ser criado: $(echo -e "${WHITE}$DATABASE_NAME${RESET}")
 
 	HERE_EOL
 
 
-	printf " > Continuar? (y/n) "
+	printf "\n > Continuar? (y/n) "
 	read yes_no
 
 	if [[ ! $yes_no =~ ^[YySs]$ ]]; then
@@ -173,9 +189,17 @@ function confirm_proceed {
 
 function get_mysql_creds {
 
+	printf '\n'
 	read -p " > Digite o usuário mysql: " MYSQL_USER
 	printf '\n'
 	read -s -p " > Digite a senha mysql: " MYSQL_PASSWD
+
+	printf '\n\n'
+
+	until mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD"  -e ";" ; do
+       printf "\n ${RED}Usuário ou senha inválidos. ${RESET}\n" 
+       get_mysql_creds
+	done
 
 	get_wordpress
 
