@@ -284,7 +284,7 @@ function get_theme_repo {
 	git clone $THEME_SRC wordpress/wp-content/themes/isotopic
 
 	#copia imagens de demonstracao para uploads
-	cp -r wordpress/wp-content/themes/isotopic/img/uploads/* wordpress/wp-content/uploads
+	cp wordpress/wp-content/themes/isotopic/img/uploads/. wordpress/wp-content/uploads/ -R
 
 	choose_mysql_dump
 }
