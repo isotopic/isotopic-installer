@@ -5,14 +5,14 @@ clear
 
 MYSQL_USER=''
 MYSQL_PASSWD=''
-DATABASE_NAME='isotopic_'$(date +%s)
+DATABASE_NAME='isotopic_'$(date +%d_%b)
 DUMP_FILE=''
 WORDPRESS_SRC='https://wordpress.org/wordpress-4.3.1.tar.gz'
 THEME_SRC='https://github.com/isotopic/isotopic-theme.git'
 INET=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
 ADDRESS=($INET)
-HOME=''
-INSTALL_PATH="${HOME}/install.sh" 
+SITEHOME=''
+INSTALL_PATH="${SITEHOME}/install.sh" 
 CYAN="\033[0;33m"
 WHITE="\033[1;37m"
 RED="\033[1;31m"
@@ -50,7 +50,7 @@ function intro {
 
 
 
-#Checa se mysql e git estão no PATH, e se mysqld e httpd estão rodando
+#Verifica se mysql e git estão no PATH, e se mysqld e httpd (osx, redhats) ou apache2 (debians) estão rodando
 function requeriments_check {
 
 	ERRORS=0
@@ -144,13 +144,13 @@ function path_check {
 
 
 
-	HOME='http://'${IP}'/'${PWD##*/}
+	SITEHOME='http://'${IP}'/'${PWD##*/}
 
-	FILE="${HOME}/install.sh"
+	FILE="${SITEHOME}/install.sh"
 	code=$(curl --write-out %{http_code} --silent --output /dev/null ${FILE})
 	if [ $code -ne 200 ] ; then
 		#printf "\n\n Url caminho:$WHITE ok$RESET"
-		printf "\n\n ${WHITE}${HOME} ${RED}não respondeu a nenhuma requisição. ${RESET}\n\n"
+		printf "\n\n ${WHITE}${SITEHOME} ${RED}não respondeu a nenhuma requisição. ${RESET}\n\n"
 
 	    exit 1
 	fi
@@ -166,7 +166,7 @@ function confirm_proceed {
 
 	 Configurações preliminares definidas. 
 
-	 Endereço previsto: $(echo -e "${WHITE}$HOME${RESET}")
+	 Endereço previsto: $(echo -e "${WHITE}$SITEHOME${RESET}")
 	 Banco de dados a ser criado: $(echo -e "${WHITE}$DATABASE_NAME${RESET}")
 
 	HERE_EOL
@@ -283,6 +283,9 @@ function get_theme_repo {
 	printf '\n\n Clonando repositório do tema...\n\n'
 	git clone $THEME_SRC wordpress/wp-content/themes/isotopic
 
+	#copia imagens de demonstracao para uploads
+	cp -r wordpress/wp-content/themes/isotopic/img/2015 wordpress/wp-content/uploads
+
 	choose_mysql_dump
 }
 
@@ -355,8 +358,8 @@ function import_mysql_dump {
 
 function config_mysql_options {
 
-	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$HOME/wordpress' WHERE option_name='siteurl'"
-	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$HOME' WHERE option_name='home'"
+	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$SITEHOME/wordpress' WHERE option_name='siteurl'"
+	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$SITEHOME' WHERE option_name='home'"
 
 	finish
 
@@ -366,7 +369,7 @@ function config_mysql_options {
 
 function finish {
 
-	printf "\n Importação completada. Site rodando em :$WHITE $HOME $RESET\n"
+	printf "\n Importação completada. Site rodando em :$WHITE $SITEHOME $RESET\n"
 
 	if [ -d ".git" ]; then
 	  rm -rf ".git"
@@ -385,7 +388,7 @@ function finish {
 	fi
 
 	if [ "$(uname)" == "Darwin" ]; then
-	   open ${HOME} 
+	   open ${SITEHOME} 
 	fi
 	exit 0
 	
