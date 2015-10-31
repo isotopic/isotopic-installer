@@ -136,7 +136,7 @@ function path_check {
 
 	else
 
-		printf "\n\n ${RED}Interface de rede não encontrada. ${RESET}\n\n"
+		printf "\a\n\n ${RED}Interface de rede não encontrada. ${RESET}\n\n"
 		exit 1
 
 	fi
@@ -197,7 +197,7 @@ function get_mysql_creds {
 	printf '\n\n'
 
 	until mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD"  -e ";" ; do
-       printf "\n ${RED}Usuário ou senha inválidos. ${RESET}\n" 
+       printf "\a\n ${RED}Usuário ou senha inválidos. ${RESET}\n" 
        get_mysql_creds
 	done
 
@@ -215,7 +215,7 @@ function get_wordpress {
 
 	if [ $? -ne 0 ]
 	then
-	    printf '\n Curl falhou.'
+	    printf '\a\n Curl falhou.'
 	    exit 1
 	else
 	    printf '\n'
@@ -283,9 +283,6 @@ function get_theme_repo {
 	printf '\n\n Clonando repositório do tema...\n\n'
 	git clone $THEME_SRC wordpress/wp-content/themes/isotopic
 
-	#copia imagens de demonstracao para uploads
-	cp -r wordpress/wp-content/themes/isotopic/img/uploads/. wordpress/wp-content/uploads/
-
 	choose_mysql_dump
 }
 
@@ -311,7 +308,7 @@ function choose_mysql_dump() {
 		elif [ $length -gt 1 ]
 		then
 
-			printf '\n Existe mais de um arquivo .sql no repositório.\n\n'	
+			printf '\a\n Existe mais de um arquivo .sql no repositório.\n\n'	
 
 			for (( i=0; i<${length}; i++ ));
 			do
@@ -331,7 +328,7 @@ function choose_mysql_dump() {
 
 	else
 
-	    printf "\n $RED Não há nenhum arquivo .sql no diretório do tema$RESET\n\n "
+	    printf "\a\n $RED Não há nenhum arquivo .sql no diretório do tema$RESET\n\n "
 	    exit 1;
 
 	fi
@@ -369,7 +366,7 @@ function config_mysql_options {
 
 function finish {
 
-	printf "\n Importação completada. Site rodando em :$WHITE $SITEHOME $RESET\n"
+	printf "\n Importação completada. Site rodando em :$WHITE $SITEHOME $RESET\n\n\n"
 
 	if [ -d ".git" ]; then
 	  rm -rf ".git"
