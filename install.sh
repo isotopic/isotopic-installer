@@ -281,7 +281,7 @@ RewriteRule . /${PWD##*/}/index.php [L]
 function get_theme_repo {
 
 	printf '\n\n Clonando repositório do tema...\n\n'
-	git clone $THEME_SRC wordpress/wp-content/themes/isotopic
+	git clone $THEME_SRC --depth=1 wordpress/wp-content/themes/isotopic
 
 	choose_mysql_dump
 }
