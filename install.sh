@@ -5,7 +5,8 @@ clear
 
 MYSQL_USER=''
 MYSQL_PASSWD=''
-DATABASE_NAME='isotopic_'$(date +%d_%b)
+#DATABASE_NAME='isotopic_'$(date +%d_%b)
+DATABASE_NAME='isotopic_local'
 DUMP_FILE=''
 WORDPRESS_SRC='https://wordpress.org/wordpress-4.3.1.tar.gz'
 THEME_SRC='https://github.com/isotopic/isotopic-theme.git'
