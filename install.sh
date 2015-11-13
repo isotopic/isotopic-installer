@@ -251,8 +251,7 @@ function config_wordpress {
 	
 
 
-echo "# BEGIN WordPress
-<IfModule mod_rewrite.c>
+echo "<IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /${PWD##*/}/
 RewriteRule ^index\.php$ - [L]
@@ -261,7 +260,9 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /${PWD##*/}/index.php [L]
 </IfModule>
 
-# END WordPress" > .htaccess
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+</IfModule>" > .htaccess
 
 	if [ $? -ne 0 ]
 	then
