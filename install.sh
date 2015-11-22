@@ -389,6 +389,9 @@ function finish {
 	if [ "$(uname)" == "Darwin" ]; then
 	   open ${SITEHOME} 
 	fi
+	
+	
+	cd 'wordpress/wp-content/themes/isotopic'
 	exit 0
 	
 
