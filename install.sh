@@ -11,7 +11,7 @@ DUMP_FILE=''
 WORDPRESS_SRC='https://wordpress.org/wordpress-4.3.1.tar.gz'
 THEME_SRC='https://github.com/isotopic/isotopic-theme.git'
 INET=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-ADDRESS=($INET)
+ADDRESS=(localhost $INET)
 SITEHOME=''
 INSTALL_PATH="${SITEHOME}/install.sh" 
 CYAN="\033[0;33m"
@@ -51,7 +51,7 @@ function intro {
 
 
 
-#Verifica se mysql e git estão no PATH, e se mysqld e httpd (osx, redhats) ou apache2 (debians) estão rodando
+#Verifica se mysql e git estão no PATH, e se mysqld e httpd (osx, redhat based) ou apache2 (debian based) estão rodando
 function requeriments_check {
 
 	ERRORS=0
@@ -98,6 +98,7 @@ function requeriments_check {
 }
 
 
+# Verifica endereços disponíveis
 function path_check {
 
 
@@ -106,13 +107,13 @@ function path_check {
 
 	if [ $length -gt 0 ] ; then
 
-		printf '\n Foram encontrados os seguintes endereços para esta máquina:\n\n'	
+		printf '\n Foram encontradas as seguintes opções para endereço local:\n\n'	
 
 		for (( i=0; i<${#ADDRESS[@]}; i++ ));
 		do
 		  printf " ${WHITE}[$(($i+1))]${RESET} ${ADDRESS[$i]}\n"
 		done
-		printf " ${WHITE}[$(($i+1))]${RESET} Digitar um hostname (ex. localhost, 127.0.0.1, etc)\n"
+		printf " ${WHITE}[$(($i+1))]${RESET} Digitar um hostname (ex. localhost:8080, meusite.local, 127.0.0.1, etc)\n"
 
 
 	 	printf "\n > Escolha uma das opções ${WHITE}[n]${RESET} e pressione enter: "
@@ -134,7 +135,6 @@ function path_check {
 
 		fi
 
-
 	else
 
 		printf "\a\n\n ${RED}Interface de rede não encontrada. ${RESET}\n\n"
@@ -144,14 +144,15 @@ function path_check {
 
 
 
-
 	SITEHOME='http://'${IP}'/'${PWD##*/}
 
+	# Verifica se o endereço fornecido está respondendo a requisições http
 	FILE="${SITEHOME}/install.sh"
+
 	code=$(curl --write-out %{http_code} --silent --output /dev/null ${FILE})
 	if [ $code -ne 200 ] ; then
-		#printf "\n\n Url caminho:$WHITE ok$RESET"
-		printf "\n\n ${WHITE}${SITEHOME} ${RED}não respondeu a nenhuma requisição. ${RESET}\n\n"
+
+		printf "\n ${WHITE}\"${SITEHOME}\" ${RED}não está respondendo a requisições http. ${RESET}\n\n"
 
 	    exit 1
 	fi
@@ -161,13 +162,12 @@ function path_check {
 }
 
 
+# Apresenta configurações definidas e confirma continuação
 function confirm_proceed {
 
 	cat <<-HERE_EOL
 
-	 Configurações preliminares definidas. 
-
-	 Endereço previsto: $(echo -e "${WHITE}$SITEHOME${RESET}")
+	 Endereço local: $(echo -e "${WHITE}$SITEHOME${RESET}")
 	 Banco de dados a ser criado: $(echo -e "${WHITE}$DATABASE_NAME${RESET}")
 
 	HERE_EOL
@@ -187,7 +187,7 @@ function confirm_proceed {
 
 }
 
-
+# Verifica se usuário e senha estão corretos - obs. supõe-se que o usuário fornecido tem permissão para criar banco novo
 function get_mysql_creds {
 
 	printf '\n'
@@ -208,7 +208,7 @@ function get_mysql_creds {
 
 
 
-
+# Download do wordpress
 function get_wordpress {
 
 	printf '\n\n Download do wordpress...\n\n'
@@ -228,7 +228,7 @@ function get_wordpress {
 
 
 
-
+# Configura wordpress com a url da instalação
 function config_wordpress {
 
 	printf '\n\n Configurando wordpress...'
@@ -279,7 +279,7 @@ RewriteRule . /${PWD##*/}/index.php [L]
 
 
 
-
+# Download do tema
 function get_theme_repo {
 
 	printf '\n\n Clonando repositório do tema...\n\n'
@@ -289,7 +289,7 @@ function get_theme_repo {
 }
 
 
-
+# Definição do dump a ser utilizado
 function choose_mysql_dump() {
 
 
@@ -341,7 +341,7 @@ function choose_mysql_dump() {
 
 
 
-
+# Importação do dump
 function import_mysql_dump {
 
 	printf "\n Arquivo .sql a ser importado:$WHITE $DUMP_FILE $RESET\n"
@@ -354,7 +354,7 @@ function import_mysql_dump {
 
 }
 
-
+# Update do banco com as variáveis locais
 function config_mysql_options {
 
 	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" --database $DATABASE_NAME -e "UPDATE wp_options SET option_value = '$SITEHOME/wordpress' WHERE option_name='siteurl'"
@@ -365,7 +365,7 @@ function config_mysql_options {
 }
 
 
-
+# Confirma instalação e se estiver em osx, já abre o browser.
 function finish {
 
 	printf "\n Importação completada. Site rodando em :$WHITE $SITEHOME $RESET\n\n\n"
@@ -396,30 +396,8 @@ function finish {
 
 
 
-
 intro 
 
-#requeriments_check
-
-#path_check
-
-#confirm_proceed
-
-#get_mysql_creds
-
-#get_wordpress
-
-#config_wordpress
-
-#get_theme_repo
-
-#choose_mysql_dump
-
-#import_mysql_dump
-
-#config_mysql_options
-
-#finish
 
 
 
