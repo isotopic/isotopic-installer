@@ -8,7 +8,7 @@ MYSQL_PASSWD=''
 #DATABASE_NAME='isotopic_'$(date +%d_%b)
 DATABASE_NAME='isotopic_local'
 DUMP_FILE=''
-WORDPRESS_SRC='https://wordpress.org/wordpress-4.3.1.tar.gz'
+WORDPRESS_SRC='https://wordpress.org/wordpress-4.4.tar.gz'
 THEME_SRC='https://github.com/isotopic/isotopic-theme.git'
 INET=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
 ADDRESS=(localhost $INET)
@@ -346,7 +346,7 @@ function import_mysql_dump {
 
 	printf "\n Arquivo .sql a ser importado:$WHITE $DUMP_FILE $RESET\n"
 
-	echo "create database $DATABASE_NAME" | mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD"
+	echo "create database IF NOT EXISTS $DATABASE_NAME" | mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD"
 
 	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWD" $DATABASE_NAME < $DUMP_FILE
 
