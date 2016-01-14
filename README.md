@@ -16,7 +16,7 @@ $ chmod u+x install.sh
 $ ./install.sh
 ```
 
-When done, all installation files are removed (install.sh, .git, README.md) and pwd is changed to the theme location (.../wordpress/wp-content/themes/isotopic). From there, any changes must be commited normally. Some of the tasks requires gulp, like spritesheet generation or deploy with rsync. 
+After done, all installation files are removed (install.sh, .git, README.md) and pwd is changed to the theme location (.../wordpress/wp-content/themes/isotopic). From there, any changes must be commited normally. Some of the tasks requires gulp, like spritesheet generation or deploy with rsync. 
 
 ```sh
 $ sudo npm install
