@@ -4,10 +4,10 @@ I don't know how this could be useful to someone else, but this is what it does:
 - Downloads the latest tar.gz from wordpress.org;
 - Unpacks the files;
 - Checks out the theme from github.com/isotopic/isotopic-theme
-- Import a basic .sql dump from the theme repo;
+- Imports a basic .sql dump from the theme repo;
 - Configures everything like wp_options, htaccess, etc.
 
-Note: Install.sh must be executed on the webroot (something like www, public_html, htdocs, etc)
+Note: `install.sh` must be executed on the webroot (something like _www_, _public_html_, _htdocs_, etc)
 
 ```sh
 $ cd /var/www/
